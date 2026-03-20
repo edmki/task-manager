@@ -1,7 +1,7 @@
 import { User } from '../entities/user'
 
-export interface UserRepository {
-  save(user: User): Promise<User>
-  findById(userId: string): Promise<User | null>
-  findByEmail(email: string): Promise<User | null>
+export abstract class UserRepository {
+  abstract save(user: User): Promise<User>
+  abstract findById(userId: string): Promise<User | null>
+  abstract findByEmail(email: string): Promise<User | null>
 }
