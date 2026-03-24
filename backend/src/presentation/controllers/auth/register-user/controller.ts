@@ -10,7 +10,7 @@ export class UserRegisterController {
 
   @Post('register')
   @ApiOperation({ summary: 'Registrar novo usuário' })
-  register(@Body() body: RegisterRequest) {
+  handle(@Body() body: RegisterRequest) {
     return this.registerUser.execute(body)
   }
 }

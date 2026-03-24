@@ -53,6 +53,11 @@ export class Task {
     this.props.updatedAt = new Date()
   }
 
+  updateDescription(description?: string): void {
+    this.props.description = description
+    this.props.updatedAt = new Date()
+  }
+
   toObject(): TaskProps {
     return { ...this.props }
   }

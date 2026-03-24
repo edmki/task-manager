@@ -10,7 +10,7 @@ export class UserLoginController {
 
   @Post('login')
   @ApiOperation({ summary: 'Autenticar usuário' })
-  login(@Body() body: LoginRequest) {
+  handle(@Body() body: LoginRequest) {
     return this.loginUser.execute(body)
   }
 }
