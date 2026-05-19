@@ -7,7 +7,7 @@ import { DeleteTask } from 'src/data/use-cases/tasks/delete-task'
 
 @ApiBearerAuth()
 @UseGuards(JwtAuthGuard)
-@ApiTags('auth')
+@ApiTags('Tasks')
 @Controller('tasks')
 export class DeleteTaskController {
   constructor(private readonly deleteTask: DeleteTask) {}
