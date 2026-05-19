@@ -1,11 +1,9 @@
 import { Module } from '@nestjs/common'
-import { LoginUser } from './auth/login-user'
-import { RegisterUser } from './auth/register-user'
-import { InfraModule } from 'src/infra/infra.module'
+import { TasksUseCasesModule } from './tasks/tasks-use-cases.module'
+import { AuthUseCasesModule } from './auth/auth-use-cases.module'
 
 @Module({
-  imports: [InfraModule],
-  providers: [LoginUser, RegisterUser],
-  exports: [LoginUser, RegisterUser],
+  imports: [AuthUseCasesModule, TasksUseCasesModule],
+  exports: [AuthUseCasesModule, TasksUseCasesModule],
 })
 export class UseCasesModule {}

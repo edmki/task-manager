@@ -8,7 +8,7 @@ import { UpdateTaskRequest } from './request'
 
 @ApiBearerAuth()
 @UseGuards(JwtAuthGuard)
-@ApiTags('auth')
+@ApiTags('Tasks')
 @Controller('tasks')
 export class UpdateTaskController {
   constructor(private readonly updateTask: UpdateTask) {}

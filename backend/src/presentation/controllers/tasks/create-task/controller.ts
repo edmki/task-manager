@@ -8,7 +8,7 @@ import { AuthenticatedUser } from 'src/presentation/types/authenticated-user'
 
 @ApiBearerAuth()
 @UseGuards(JwtAuthGuard)
-@ApiTags('auth')
+@ApiTags('Tasks')
 @Controller('tasks')
 export class CreateTaskController {
   constructor(private readonly createTask: CreateTask) {}
