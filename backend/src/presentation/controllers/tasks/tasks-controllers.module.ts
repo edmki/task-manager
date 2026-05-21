@@ -3,6 +3,7 @@ import { UseCasesModule } from 'src/data/use-cases/use-cases.module'
 import { CreateTaskController } from './create-task/controller'
 import { DeleteTaskController } from './delete-task/controller'
 import { UpdateTaskController } from './update-task/controller'
+import { ListTasksController } from './list-tasks/controller'
 
 @Module({
   imports: [UseCasesModule],
@@ -10,6 +11,7 @@ import { UpdateTaskController } from './update-task/controller'
     CreateTaskController,
     DeleteTaskController,
     UpdateTaskController,
+    ListTasksController,
   ],
 })
 export class TasksControllersModule {}
