@@ -5,6 +5,7 @@ import { DeleteTaskController } from './delete-task/controller'
 import { UpdateTaskController } from './update-task/controller'
 import { ListTasksController } from './list-tasks/controller'
 import { CompleteTaskController } from './complete-task/controller'
+import { UncompleteTaskController } from './uncomplete-task/controller'
 
 @Module({
   imports: [UseCasesModule],
@@ -14,6 +15,7 @@ import { CompleteTaskController } from './complete-task/controller'
     UpdateTaskController,
     ListTasksController,
     CompleteTaskController,
+    UncompleteTaskController,
   ],
 })
 export class TasksControllersModule {}

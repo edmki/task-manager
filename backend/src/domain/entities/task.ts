@@ -45,6 +45,11 @@ export class Task {
     this.props.updatedAt = new Date()
   }
 
+  uncomplete(): void {
+    this.props.completed = false
+    this.props.updatedAt = new Date()
+  }
+
   updateTitle(title: string): void {
     if (!title || title.trim().length === 0) {
       throw new Error('Task title cannot be empty')
