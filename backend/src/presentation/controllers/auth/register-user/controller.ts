@@ -3,7 +3,7 @@ import { ApiTags, ApiOperation } from '@nestjs/swagger'
 import { RegisterUser } from 'src/data/use-cases/auth/register-user'
 import { RegisterRequest } from './request'
 
-@ApiTags('auth')
+@ApiTags('Auth')
 @Controller('auth')
 export class UserRegisterController {
   constructor(private readonly registerUser: RegisterUser) {}
