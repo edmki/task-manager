@@ -3,7 +3,7 @@ import { ApiTags, ApiOperation } from '@nestjs/swagger'
 import { LoginUser } from 'src/data/use-cases/auth/login-user'
 import { LoginRequest } from './request'
 
-@ApiTags('auth')
+@ApiTags('Auth')
 @Controller('auth')
 export class UserLoginController {
   constructor(private readonly loginUser: LoginUser) {}
