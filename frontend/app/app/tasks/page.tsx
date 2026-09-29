@@ -9,7 +9,7 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { ButtonGroup } from "@/components/ui/button-group";
 import { useCreateTask } from "@/hooks/tasks/use-create-task";
-import { useState } from "react";
+import { useMemo, useState } from "react";
 
 export default function DashboardPage() {
   const { data: tasks, isLoading } = useTasks();
@@ -17,18 +17,22 @@ export default function DashboardPage() {
   const { mutate: createTask } = useCreateTask();
   const [newTaskTitle, setNewTaskTitle] = useState("");
 
-  if (isLoading) return <div>Carregando tarefas...</div>;
+  const inProgressTasks = useMemo(() => {
+    if (!tasks) return [];
+    return tasks.filter((task) => !task.completed);
+  }, [tasks]);
 
   return (
     <div className="max-w-3xl mx-auto w-full">
       <div>
-        {tasks?.map((task) => (
+        {inProgressTasks.map((task) => (
           <Item key={task.id}>
             <Field orientation="horizontal">
               <Checkbox
                 id="toggle-checkbox-2"
                 name="toggle-checkbox-2"
-                // onClick={() => completeTask(task.id)}
+                className="mr-1"
+                onClick={() => completeTask(task.id)}
               />
               <FieldContent>
                 <FieldTitle>{task.title}</FieldTitle>
