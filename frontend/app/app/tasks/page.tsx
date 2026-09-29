@@ -20,7 +20,7 @@ export default function DashboardPage() {
   if (isLoading) return <div>Carregando tarefas...</div>;
 
   return (
-    <div>
+    <div className="max-w-3xl mx-auto w-full">
       <div>
         {tasks?.map((task) => (
           <Item key={task.id}>

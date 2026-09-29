@@ -30,13 +30,13 @@ export function DashboardSidebar() {
           <SidebarGroupLabel>Task Manager</SidebarGroupLabel>
           <SidebarMenu>
             <SidebarMenuItem>
-              <SidebarMenuButton render={<a href="#" />} isActive>
+              <SidebarMenuButton render={<a href="#" />}>
                 <LayoutList />
                 Minhas tarefas
               </SidebarMenuButton>
             </SidebarMenuItem>
             <SidebarMenuItem>
-              <SidebarMenuButton render={<a href="#" />} isActive>
+              <SidebarMenuButton render={<a href="#" />}>
                 <Check />
                 Concluídas
               </SidebarMenuButton>
