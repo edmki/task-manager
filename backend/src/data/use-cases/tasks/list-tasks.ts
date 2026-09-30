@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common'
-import { TaskRepository } from 'src/domain/repositories/task-repository'
+import { TaskRepository } from 'domain/repositories/task-repository'
 
 export interface ListTasksResultItem {
   id: string

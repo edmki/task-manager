@@ -1,5 +1,5 @@
 import { Injectable, NotFoundException } from '@nestjs/common'
-import { TaskRepository } from 'src/domain/repositories/task-repository'
+import { TaskRepository } from 'domain/repositories/task-repository'
 
 export interface UpdateTaskParams {
   taskId: string
