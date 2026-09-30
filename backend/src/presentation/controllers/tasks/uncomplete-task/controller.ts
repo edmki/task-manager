@@ -1,9 +1,9 @@
 import { Controller, Param, Patch, UseGuards } from '@nestjs/common'
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger'
-import { JwtAuthGuard } from 'src/presentation/guards/jwt-auth.guard'
-import { User } from 'src/presentation/decorators/user.decorator'
-import { AuthenticatedUser } from 'src/presentation/types/authenticated-user'
-import { UncompleteTask } from 'src/data/use-cases/tasks/uncomplete-task'
+import { JwtAuthGuard } from 'presentation/guards/jwt-auth.guard'
+import { User } from 'presentation/decorators/user.decorator'
+import { AuthenticatedUser } from 'presentation/types/authenticated-user'
+import { UncompleteTask } from 'data/use-cases/tasks/uncomplete-task'
 
 @ApiBearerAuth()
 @UseGuards(JwtAuthGuard)

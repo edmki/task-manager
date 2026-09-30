@@ -1,7 +1,7 @@
 import { Body, Controller, Post } from '@nestjs/common'
 import { ApiTags, ApiOperation } from '@nestjs/swagger'
-import { RegisterUser } from 'src/data/use-cases/auth/register-user'
 import { RegisterRequest } from './request'
+import { RegisterUser } from 'data/use-cases/auth/register-user'
 
 @ApiTags('Auth')
 @Controller('auth')

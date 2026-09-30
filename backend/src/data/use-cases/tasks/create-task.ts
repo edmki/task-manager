@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common'
-import { Task } from 'src/domain/entities/task'
-import { TaskRepository } from 'src/domain/repositories/task-repository'
+import { Task } from 'domain/entities/task'
+import { TaskRepository } from 'domain/repositories/task-repository'
 import { v4 as uuid } from 'uuid'
 
 export interface CreateTaskParams {
