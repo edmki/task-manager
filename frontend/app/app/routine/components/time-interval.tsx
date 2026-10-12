@@ -2,32 +2,31 @@ import { useDroppable } from "@dnd-kit/react";
 import { CollisionDetector } from "@dnd-kit/collision";
 import { CollisionPriority, CollisionType } from "@dnd-kit/abstract";
 
-const topDetector: CollisionDetector = ({ dragOperation, droppable }) => {
-  if (!dragOperation.shape || !droppable.shape) {
+const topProximityDetector: CollisionDetector = ({
+  dragOperation,
+  droppable,
+}) => {
+  const draggableRect = dragOperation.shape?.current.boundingRectangle;
+  const droppableRect = droppable.shape?.boundingRectangle;
+
+  if (!draggableRect || !droppableRect) {
     return null;
   }
 
-  const draggableRect = dragOperation.shape.current.boundingRectangle;
-  const droppableRect = droppable.shape.boundingRectangle;
+  const MAX_DISTANCE = 30;
 
-  const topCenterX = draggableRect.left + draggableRect.width / 2;
+  const distance = Math.abs(draggableRect.top - droppableRect.top);
 
-  const topY = draggableRect.top;
+  if (distance > MAX_DISTANCE) {
+    return null;
+  }
 
-  const isInside =
-    topCenterX >= droppableRect.left &&
-    topCenterX <= droppableRect.right &&
-    topY >= droppableRect.top &&
-    topY <= droppableRect.bottom;
-
-  return isInside
-    ? {
-        id: droppable.id,
-        value: 1, // Higher values win
-        type: CollisionType.Collision,
-        priority: CollisionPriority.Normal,
-      }
-    : null;
+  return {
+    id: droppable.id,
+    value: 1 / (distance + 1),
+    type: CollisionType.Collision,
+    priority: CollisionPriority.Normal,
+  };
 };
 
 export function TimeInterval({
@@ -41,7 +40,7 @@ export function TimeInterval({
 }) {
   const { ref, isDropTarget } = useDroppable({
     id,
-    collisionDetector: topDetector,
+    collisionDetector: topProximityDetector,
   });
 
   return (

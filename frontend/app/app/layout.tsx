@@ -13,7 +13,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
         <header className="flex p-4">
           <SidebarTrigger />
         </header>
-        <main className="flex flex-1 flex-col gap-4 p-4 pt-0">{children}</main>
+        <main className="gap-4 p-4 pt-0">{children}</main>
       </SidebarInset>
     </SidebarProvider>
   );
