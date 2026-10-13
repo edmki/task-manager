@@ -211,11 +211,11 @@ export default function RoutinePage() {
           </div>
           <div className="flex-1 relative">
             <div className="flex flex-col">
-              {intervalsData.map((interval) => (
+              {intervalsData.map((interval, index) => (
                 <TimeInterval
                   key={interval.id}
                   id={interval.id}
-                  className="h-6 border-t border-zinc-700"
+                  className={`h-6 border-t ${index % 2 === 0 ? "border-zinc-800" : "border-zinc-900"}`}
                 />
               ))}
             </div>

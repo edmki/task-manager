@@ -25,7 +25,7 @@ export function Task({ id, title, startTime, endTime }: TaskProps) {
   return (
     <div
       ref={ref}
-      className="bg-zinc-800 rounded-md p-2 absolute w-full cursor-grab"
+      className="bg-zinc-800 rounded-md p-1 absolute w-full cursor-grab text-sm"
       style={{ top, height }}
     >
       <span>{title}</span>
