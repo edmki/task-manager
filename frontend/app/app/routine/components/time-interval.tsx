@@ -15,6 +15,13 @@ const topProximityDetector: CollisionDetector = ({
 
   const MAX_DISTANCE = 30;
 
+  if (
+    droppableRect.right < draggableRect.left ||
+    droppableRect.left > draggableRect.right
+  ) {
+    return null;
+  }
+
   const distance = Math.abs(draggableRect.top - droppableRect.top);
 
   if (distance > MAX_DISTANCE) {

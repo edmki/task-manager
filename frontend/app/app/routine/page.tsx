@@ -1,5 +1,5 @@
 "use client";
-import { useMemo, useState } from "react";
+import { useCallback, useMemo, useState } from "react";
 import { TaskBlock } from "./components/task-block";
 import { DragDropProvider, DragOverlay } from "@dnd-kit/react";
 import { useSettings } from "@/hooks/use-settings";
@@ -86,6 +86,16 @@ export default function RoutinePage() {
       const newStartTime = new Date(intervalsData[intervalIndex].startTime);
       const newEndTime = new Date(newStartTime.getTime() + taskDuration);
 
+      const hasOverlap = prevTasks.some((task) => {
+        if (task.id === sourceId) return false;
+
+        return newStartTime < task.endTime && newEndTime > task.startTime;
+      });
+
+      if (hasOverlap) {
+        return prevTasks;
+      }
+
       const updatedTask = {
         id: taskToUpdate.id,
         title: taskToUpdate.title,
@@ -116,6 +126,14 @@ export default function RoutinePage() {
     const newEndTime = new Date(
       newStartTime.getTime() + taskBlockToMove.duration * 60 * 1000,
     );
+
+    const hasOverlap = tasks.some((task) => {
+      if (task.id === sourceId) return false;
+
+      return newStartTime < task.endTime && newEndTime > task.startTime;
+    });
+
+    if (hasOverlap) return;
 
     // Create a new task based on the task block
     const newTask = {
