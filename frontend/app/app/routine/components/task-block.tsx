@@ -24,11 +24,9 @@ export function TaskBlock({ id, title, duration }: TaskBlockProps) {
   });
 
   return (
-    <div
-      ref={ref}
-      className={`bg-zinc-800 rounded-md p-2 w-full cursor-grab h-12`}
-    >
+    <div ref={ref} className={`bg-zinc-800 rounded-md p-2 w-full cursor-grab`}>
       <span>{title}</span>
+      <div className="text-xs text-zinc-400">{duration} min</div>
     </div>
   );
 }
