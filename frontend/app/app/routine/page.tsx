@@ -1,5 +1,5 @@
 "use client";
-import { useCallback, useMemo, useState } from "react";
+import { useMemo, useState } from "react";
 import { TaskBlock } from "./components/task-block";
 import { DragDropProvider, DragOverlay } from "@dnd-kit/react";
 import { useSettings } from "@/hooks/use-settings";
@@ -188,7 +188,7 @@ export default function RoutinePage() {
         }}
       </DragOverlay>
       <div className="max-w-3xl w-full">
-        <TaskBlocksSidebar droppableId="task-blocks-sidebar">
+        <TaskBlocksSidebar>
           {taskBlocks.map((task) => (
             <TaskBlock
               key={task.id}
