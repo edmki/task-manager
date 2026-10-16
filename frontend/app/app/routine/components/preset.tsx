@@ -2,18 +2,19 @@
 
 import { useDraggable } from "@dnd-kit/react";
 import { Feedback } from "@dnd-kit/dom";
+import { DraggableType } from "../enums/draggable-type";
 
-type TaskBlockProps = {
+type PresetProps = {
   id: string;
   title: string;
   duration: number;
 };
 
-export function TaskBlock({ id, title, duration }: TaskBlockProps) {
+export function Preset({ id, title, duration }: PresetProps) {
   const { ref } = useDraggable({
     id,
     data: {
-      type: "task-block",
+      type: DraggableType.preset,
       duration,
     },
     plugins: [

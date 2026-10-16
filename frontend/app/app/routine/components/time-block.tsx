@@ -4,14 +4,14 @@ import { useDraggable } from "@dnd-kit/react";
 import { useSettings } from "@/hooks/use-settings";
 import { useMemo } from "react";
 
-type TaskProps = {
+type TimeBlockProps = {
   id: string;
   title: string;
   startTime: Date;
   endTime: Date;
 };
 
-export function Task({ id, title, startTime, endTime }: TaskProps) {
+export function TimeBlock({ id, title, startTime, endTime }: TimeBlockProps) {
   const { ref } = useDraggable({
     id,
   });

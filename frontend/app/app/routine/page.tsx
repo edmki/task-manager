@@ -1,43 +1,44 @@
 "use client";
 import { useMemo, useState } from "react";
-import { TaskBlock } from "./components/task-block";
+import { Preset } from "./components/preset";
 import { DragDropProvider, DragOverlay } from "@dnd-kit/react";
 import { useSettings } from "@/hooks/use-settings";
 import { TimeInterval } from "./components/time-interval";
-import { TaskBlocksSidebar } from "./components/task-blocks-sidebar";
-import { Task } from "./components/task";
+import { PresetsSidebar } from "./components/presets-sidebar";
+import { TimeBlock } from "./components/time-block";
+import { DraggableType } from "./enums/draggable-type";
 
-const tasksData = [
+const timeBlocksData = [
   {
-    id: "task-1",
+    id: "time-block-1",
     title: "Almoço",
     startTime: new Date("2026-10-03T12:00:00"),
     endTime: new Date("2026-10-03T13:00:00"),
   },
   {
-    id: "task-2",
+    id: "time-block-2",
     title: "Trabalho focado",
     startTime: new Date("2026-10-03T14:00:00"),
     endTime: new Date("2026-10-03T16:30:00"),
   },
 ];
 
-const taskBlocksData = [
+const presetsData = [
   {
-    id: "task-block-1",
+    id: "preset-1",
     title: "Pausa",
     duration: 30,
   },
   {
-    id: "task-block-2",
+    id: "preset-2",
     title: "Trabalho focado",
     duration: 90,
   },
 ];
 
 export default function RoutinePage() {
-  const [tasks, setTasks] = useState(tasksData);
-  const [taskBlocks, setTaskBlocks] = useState(taskBlocksData);
+  const [timeBlocks, setTimeBlocks] = useState(timeBlocksData);
+  const [presets, setPresets] = useState(presetsData);
   const { dayStartTime, dayEndTime, timeIntervalMinutes } = useSettings();
 
   const totalIntervals = useMemo(
@@ -69,81 +70,88 @@ export default function RoutinePage() {
     });
   }, [dayStartTime, timeIntervalMinutes, totalIntervals]);
 
-  const handleTaskDragEnd = (sourceId: string, targetId: string) => {
+  const handleTimeBlockDragEnd = (sourceId: string, targetId: string) => {
     const intervalIndex = intervalsData.findIndex(
       (interval) => interval.id === targetId,
     );
 
     if (intervalIndex === -1) return;
 
-    setTasks((prevTasks) => {
-      const taskIndex = prevTasks.findIndex((task) => task.id === sourceId);
-      if (taskIndex === -1) return prevTasks;
+    setTimeBlocks((prevTimeBlocks) => {
+      const timeBlockIndex = prevTimeBlocks.findIndex(
+        (timeBlock) => timeBlock.id === sourceId,
+      );
+      if (timeBlockIndex === -1) return prevTimeBlocks;
 
-      const taskToUpdate = prevTasks[taskIndex];
-      const taskDuration =
-        taskToUpdate.endTime.getTime() - taskToUpdate.startTime.getTime();
+      const timeBlockToUpdate = prevTimeBlocks[timeBlockIndex];
+      const timeBlockDuration =
+        timeBlockToUpdate.endTime.getTime() -
+        timeBlockToUpdate.startTime.getTime();
       const newStartTime = new Date(intervalsData[intervalIndex].startTime);
-      const newEndTime = new Date(newStartTime.getTime() + taskDuration);
+      const newEndTime = new Date(newStartTime.getTime() + timeBlockDuration);
 
-      const hasOverlap = prevTasks.some((task) => {
-        if (task.id === sourceId) return false;
+      const hasOverlap = prevTimeBlocks.some((timeBlock) => {
+        if (timeBlock.id === sourceId) return false;
 
-        return newStartTime < task.endTime && newEndTime > task.startTime;
+        return (
+          newStartTime < timeBlock.endTime && newEndTime > timeBlock.startTime
+        );
       });
 
       if (hasOverlap) {
-        return prevTasks;
+        return prevTimeBlocks;
       }
 
-      const updatedTask = {
-        id: taskToUpdate.id,
-        title: taskToUpdate.title,
+      const updatedTimeBlock = {
+        id: timeBlockToUpdate.id,
+        title: timeBlockToUpdate.title,
         startTime: newStartTime,
         endTime: newEndTime,
       };
 
-      const updatedTasks = [...prevTasks];
-      updatedTasks[taskIndex] = updatedTask;
+      const updatedTimeBlocks = [...prevTimeBlocks];
+      updatedTimeBlocks[timeBlockIndex] = updatedTimeBlock;
 
-      return updatedTasks;
+      return updatedTimeBlocks;
     });
   };
 
-  const handleTaskBlockDragEnd = (sourceId: string, targetId: string) => {
-    const sourceTaskBlockIndex = taskBlocks.findIndex(
-      (task) => task.id === sourceId,
+  const handlePresetDragEnd = (sourceId: string, targetId: string) => {
+    const sourcePresetIndex = presets.findIndex(
+      (preset) => preset.id === sourceId,
     );
     const intervalIndex = intervalsData.findIndex(
       (interval) => interval.id === targetId,
     );
 
-    if (sourceTaskBlockIndex === -1 || intervalIndex === -1) return;
+    if (sourcePresetIndex === -1 || intervalIndex === -1) return;
 
-    const taskBlockToMove = taskBlocks[sourceTaskBlockIndex];
+    const presetToMove = presets[sourcePresetIndex];
 
     const newStartTime = new Date(intervalsData[intervalIndex].startTime);
     const newEndTime = new Date(
-      newStartTime.getTime() + taskBlockToMove.duration * 60 * 1000,
+      newStartTime.getTime() + presetToMove.duration * 60 * 1000,
     );
 
-    const hasOverlap = tasks.some((task) => {
-      if (task.id === sourceId) return false;
+    const hasOverlap = timeBlocks.some((timeBlock) => {
+      if (timeBlock.id === sourceId) return false;
 
-      return newStartTime < task.endTime && newEndTime > task.startTime;
+      return (
+        newStartTime < timeBlock.endTime && newEndTime > timeBlock.startTime
+      );
     });
 
     if (hasOverlap) return;
 
-    // Create a new task based on the task block
-    const newTask = {
-      id: `task-${Date.now()}`,
-      title: taskBlockToMove.title,
+    // Create a new timeBlock based on the preset
+    const newTimeBlock = {
+      id: `time-block-${Date.now()}`,
+      title: presetToMove.title,
       startTime: newStartTime,
       endTime: newEndTime,
     };
 
-    setTasks((prevTasks) => [...prevTasks, newTask]);
+    setTimeBlocks((prevTimeBlocks) => [...prevTimeBlocks, newTimeBlock]);
   };
 
   return (
@@ -151,15 +159,15 @@ export default function RoutinePage() {
       onDragEnd={({ operation }) => {
         if (!operation?.source) return;
 
-        if (operation.source.data?.type === "task-block") {
-          handleTaskBlockDragEnd(
+        if (operation.source.data?.type === DraggableType.preset) {
+          handlePresetDragEnd(
             operation.source.id.toString(),
             operation.target?.id.toString() || "",
           );
           return;
         }
 
-        handleTaskDragEnd(
+        handleTimeBlockDragEnd(
           operation.source.id.toString(),
           operation.target?.id.toString() || "",
         );
@@ -167,37 +175,39 @@ export default function RoutinePage() {
     >
       <DragOverlay
         dropAnimation={null}
-        disabled={(source) => source?.data?.type !== "task-block"}
+        disabled={(source) => source?.data?.type !== DraggableType.preset}
       >
         {(source) => {
-          if (!source || source.data?.type !== "task-block") {
+          if (!source || source.data?.type !== DraggableType.preset) {
             return null;
           }
 
-          const taskBlock = taskBlocks.find((task) => task.id === source.id);
+          const preset = presets.find(
+            (timeBlock) => timeBlock.id === source.id,
+          );
 
-          if (!taskBlock) return null;
+          if (!preset) return null;
 
           return (
-            <TaskBlock
-              id={taskBlock.id}
-              title={taskBlock.title}
-              duration={taskBlock.duration}
+            <Preset
+              id={preset.id}
+              title={preset.title}
+              duration={preset.duration}
             />
           );
         }}
       </DragOverlay>
       <div className="max-w-3xl w-full">
-        <TaskBlocksSidebar>
-          {taskBlocks.map((task) => (
-            <TaskBlock
-              key={task.id}
-              id={task.id}
-              title={task.title}
-              duration={task.duration}
+        <PresetsSidebar>
+          {presets.map((preset) => (
+            <Preset
+              key={preset.id}
+              id={preset.id}
+              title={preset.title}
+              duration={preset.duration}
             />
           ))}
-        </TaskBlocksSidebar>
+        </PresetsSidebar>
         <h1>Rotina</h1>
         <div className="flex gap-4 mt-8">
           <div className="flex flex-col text-zinc-400 text-sm -top-2 relative">
@@ -219,13 +229,13 @@ export default function RoutinePage() {
                 />
               ))}
             </div>
-            {tasks.map((task) => (
-              <Task
-                key={task.id}
-                id={task.id}
-                title={task.title}
-                startTime={task.startTime}
-                endTime={task.endTime}
+            {timeBlocks.map((timeBlock) => (
+              <TimeBlock
+                key={timeBlock.id}
+                id={timeBlock.id}
+                title={timeBlock.title}
+                startTime={timeBlock.startTime}
+                endTime={timeBlock.endTime}
               />
             ))}
           </div>
