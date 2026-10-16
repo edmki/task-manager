@@ -8,11 +8,11 @@ import {
   Sidebar,
 } from "@/components/ui/sidebar";
 
-type TaskBlocksSidebarProps = {
+type PresetsSidebarProps = {
   children?: React.ReactNode;
 };
 
-export function TaskBlocksSidebar({ children }: TaskBlocksSidebarProps) {
+export function PresetsSidebar({ children }: PresetsSidebarProps) {
   return (
     <Sidebar side="right">
       <SidebarHeader />
