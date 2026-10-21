@@ -1,12 +1,12 @@
 import { api } from "@/lib/api";
 
-export interface Task {
+export type Task = {
   id: string;
   title: string;
   description?: string;
   completed: boolean;
   createdAt: string;
-}
+};
 
 export const tasksService = {
   list: () => api.get<Task[]>("/tasks").then((r) => r.data),

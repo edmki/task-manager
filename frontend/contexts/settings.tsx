@@ -9,10 +9,10 @@ export type SettingsContextType = {
 };
 
 const defaultSettings: SettingsContextType = {
-  dayStartTime: new Date("2026-10-03T06:00:00"),
-  dayEndTime: new Date("2026-10-03T23:00:00"),
+  dayStartTime: new Date(new Date().setHours(8, 0, 0, 0)),
+  dayEndTime: new Date(new Date().setHours(23, 0, 0, 0)),
   timeIntervalMinutes: 30,
-  pxPerMinute: 48 / 60, // 48px per hour, so 0.8px per minute
+  pxPerMinute: 48 / 60,
 };
 
 export const SettingsContext =
