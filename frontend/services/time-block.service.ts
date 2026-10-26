@@ -22,13 +22,16 @@ const timeBlockMock: TimeBlock[] = [
   },
 ];
 
+const delay = <T>(value: T, ms = 300) =>
+  new Promise<T>((resolve) => setTimeout(() => resolve(value), ms));
+
 function createTimeBlock(data: CreateTimeBlockInput): Promise<TimeBlock> {
   const newTimeBlock: TimeBlock = {
     id: crypto.randomUUID(),
     ...data,
   };
   timeBlockMock.push(newTimeBlock);
-  return Promise.resolve(newTimeBlock);
+  return delay(newTimeBlock);
 }
 
 function updateTimeBlock(data: TimeBlock): Promise<TimeBlock> {
@@ -40,14 +43,14 @@ function updateTimeBlock(data: TimeBlock): Promise<TimeBlock> {
       startTime: data.startTime,
       endTime: data.endTime,
     };
-    return Promise.resolve(timeBlockMock[index]);
+    return delay(timeBlockMock[index]);
   } else {
     return Promise.reject(new Error("Time block not found"));
   }
 }
 
 export const timeBlockService = {
-  list: () => Promise.resolve(timeBlockMock),
+  list: () => delay([...timeBlockMock]),
   create: createTimeBlock,
   update: updateTimeBlock,
 };

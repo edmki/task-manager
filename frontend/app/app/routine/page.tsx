@@ -1,6 +1,6 @@
 "use client";
 import { useMemo } from "react";
-import { Preset } from "./components/preset";
+import { Preset as PresetItem } from "./components/preset";
 import { DragDropProvider, DragOverlay } from "@dnd-kit/react";
 import { useSettings } from "@/hooks/use-settings";
 import { TimeInterval } from "./components/time-interval";
@@ -11,6 +11,11 @@ import { usePresets } from "@/hooks/presets/use-presets";
 import { useTimeBlocks } from "@/hooks/time-blocks/use-time-blocks";
 import { useCreateTimeBlock } from "@/hooks/time-blocks/use-create-time-block";
 import { useUpdateTimeBlock } from "@/hooks/time-blocks/use-update-time-block";
+import { PresetDialog } from "./components/preset-dialog";
+import { useCreatePreset } from "@/hooks/presets/use-create-preset";
+import { Dialog } from "@base-ui/react";
+import { Preset } from "@/services/presets.service";
+import { useUpdatePreset } from "@/hooks/presets/use-update-preset";
 
 export default function RoutinePage() {
   const { data: presets } = usePresets();
@@ -18,8 +23,12 @@ export default function RoutinePage() {
 
   const { mutate: createTimeBlock } = useCreateTimeBlock();
   const { mutate: updateTimeBlock } = useUpdateTimeBlock();
+  const { mutate: createPreset } = useCreatePreset();
+  const { mutate: updatePreset } = useUpdatePreset();
 
   const { dayStartTime, dayEndTime, timeIntervalMinutes } = useSettings();
+
+  const presetDialog = Dialog.createHandle<Preset>();
 
   const totalIntervals = useMemo(
     () =>
@@ -124,6 +133,14 @@ export default function RoutinePage() {
     });
   };
 
+  const handleCreatePreset = (preset: Omit<Preset, "id">) => {
+    createPreset(preset);
+  };
+
+  const handleEditPreset = (preset: Preset) => {
+    updatePreset(preset);
+  };
+
   if (!presets || !timeBlocks) {
     return <div>Loading...</div>;
   }
@@ -161,7 +178,7 @@ export default function RoutinePage() {
           if (!preset) return null;
 
           return (
-            <Preset
+            <PresetItem
               id={preset.id}
               title={preset.title}
               duration={preset.durationMinutes}
@@ -170,9 +187,9 @@ export default function RoutinePage() {
         }}
       </DragOverlay>
       <div className="max-w-3xl w-full">
-        <PresetsSidebar>
+        <PresetsSidebar dialogHandle={presetDialog}>
           {presets.map((preset) => (
-            <Preset
+            <PresetItem
               key={preset.id}
               id={preset.id}
               title={preset.title}
@@ -213,6 +230,11 @@ export default function RoutinePage() {
           </div>
         </div>
       </div>
+      <PresetDialog
+        dialogHandle={presetDialog}
+        onCreate={handleCreatePreset}
+        onEdit={handleEditPreset}
+      />
     </DragDropProvider>
   );
 }

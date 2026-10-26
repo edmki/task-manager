@@ -17,6 +17,28 @@ const presetMock: Preset[] = [
   },
 ];
 
+const delay = <T>(value: T, ms = 300) =>
+  new Promise<T>((resolve) => setTimeout(() => resolve(value), ms));
+
 export const presetsService = {
-  list: () => Promise.resolve(presetMock),
+  list: () => delay([...presetMock]),
+  create: (data: Omit<Preset, "id">): Promise<Preset> => {
+    const newPreset: Preset = {
+      id: crypto.randomUUID(),
+      ...data,
+    };
+
+    presetMock.push(newPreset);
+
+    return delay(newPreset);
+  },
+  update: (data: Preset): Promise<Preset> => {
+    const index = presetMock.findIndex((p) => p.id === data.id);
+
+    if (index === -1) return Promise.reject(new Error("Preset not found"));
+
+    presetMock[index] = { ...presetMock[index], ...data };
+
+    return delay({ ...presetMock[index] });
+  },
 };
