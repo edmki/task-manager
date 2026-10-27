@@ -3,16 +3,12 @@ import { createContext, useCallback, useMemo, useState } from "react";
 export type SettingsContextType = {
   dayStartTime: Date;
   dayEndTime: Date;
-  timeIntervalMinutes: number;
-  pxPerMinute: number;
   updateSettings?: (settings: SettingsContextType) => void;
 };
 
 const defaultSettings: SettingsContextType = {
   dayStartTime: new Date(new Date().setHours(8, 0, 0, 0)),
   dayEndTime: new Date(new Date().setHours(23, 0, 0, 0)),
-  timeIntervalMinutes: 30,
-  pxPerMinute: 48 / 60,
 };
 
 export const SettingsContext =

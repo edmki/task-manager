@@ -3,6 +3,7 @@
 import { useDraggable } from "@dnd-kit/react";
 import { useSettings } from "@/hooks/use-settings";
 import { useMemo } from "react";
+import { PIXELS_PER_MINUTE, TIME_INTERVAL_MINUTES } from "@/constants/settings";
 
 type TimeBlockProps = {
   id: string;
@@ -15,19 +16,20 @@ export function TimeBlock({ id, title, startTime, endTime }: TimeBlockProps) {
   const { ref } = useDraggable({
     id,
   });
-  const { dayStartTime, timeIntervalMinutes, pxPerMinute } = useSettings();
+  const { dayStartTime } = useSettings();
 
   const top =
     ((startTime.getTime() - dayStartTime.getTime()) / (1000 * 60)) *
-    pxPerMinute;
+    PIXELS_PER_MINUTE;
   const height =
-    ((endTime.getTime() - startTime.getTime()) / (1000 * 60)) * pxPerMinute;
+    ((endTime.getTime() - startTime.getTime()) / (1000 * 60)) *
+    PIXELS_PER_MINUTE;
 
   const oneInterval: boolean = useMemo(
     () =>
       endTime.getTime() - startTime.getTime() <
-      1000 * 60 * timeIntervalMinutes * 2,
-    [endTime, startTime, timeIntervalMinutes],
+      1000 * 60 * TIME_INTERVAL_MINUTES * 2,
+    [endTime, startTime],
   );
 
   const startTimeString = useMemo(() => {

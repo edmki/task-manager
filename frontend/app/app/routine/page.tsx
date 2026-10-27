@@ -16,6 +16,7 @@ import { useCreatePreset } from "@/hooks/presets/use-create-preset";
 import { Dialog } from "@base-ui/react";
 import { Preset } from "@/services/presets.service";
 import { useUpdatePreset } from "@/hooks/presets/use-update-preset";
+import { TIME_INTERVAL_MINUTES } from "@/constants/settings";
 
 export default function RoutinePage() {
   const { data: presets } = usePresets();
@@ -26,7 +27,7 @@ export default function RoutinePage() {
   const { mutate: createPreset } = useCreatePreset();
   const { mutate: updatePreset } = useUpdatePreset();
 
-  const { dayStartTime, dayEndTime, timeIntervalMinutes } = useSettings();
+  const { dayStartTime, dayEndTime } = useSettings();
 
   const presetDialog = Dialog.createHandle<Preset>();
 
@@ -36,20 +37,22 @@ export default function RoutinePage() {
         0,
         Math.floor(
           (dayEndTime.getTime() - dayStartTime.getTime()) /
-            (1000 * 60 * timeIntervalMinutes),
+            (1000 * 60 * TIME_INTERVAL_MINUTES),
         ),
       ),
-    [dayEndTime, dayStartTime, timeIntervalMinutes],
+    [dayEndTime, dayStartTime],
   );
 
   const intervalsData = useMemo(() => {
     return Array.from({ length: totalIntervals }).map((_, index) => {
       const intervalStart = new Date(dayStartTime);
       intervalStart.setMinutes(
-        dayStartTime.getMinutes() + index * timeIntervalMinutes,
+        dayStartTime.getMinutes() + index * TIME_INTERVAL_MINUTES,
       );
       const intervalEnd = new Date(intervalStart);
-      intervalEnd.setMinutes(intervalStart.getMinutes() + timeIntervalMinutes);
+      intervalEnd.setMinutes(
+        intervalStart.getMinutes() + TIME_INTERVAL_MINUTES,
+      );
 
       return {
         id: `time-interval-${index}`,
@@ -57,7 +60,7 @@ export default function RoutinePage() {
         endTime: intervalEnd,
       };
     });
-  }, [dayStartTime, timeIntervalMinutes, totalIntervals]);
+  }, [dayStartTime, totalIntervals]);
 
   const handleTimeBlockDragEnd = (sourceId: string, targetId: string) => {
     const intervalIndex = intervalsData.findIndex(
@@ -117,8 +120,6 @@ export default function RoutinePage() {
     );
 
     const hasOverlap = timeBlocks.some((timeBlock) => {
-      if (timeBlock.id === targetId) return false;
-
       return (
         newStartTime < timeBlock.endTime && newEndTime > timeBlock.startTime
       );
