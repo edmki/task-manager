@@ -207,9 +207,12 @@ export default function RoutinePage() {
                 {`${String(dayStartTime.getHours() + index).padStart(2, "0")}:00`}
               </div>
             ))}
+            <div className="h-12">
+              {`${String(dayEndTime.getHours()).padStart(2, "0")}:00`}
+            </div>
           </div>
           <div className="flex-1 relative">
-            <div className="flex flex-col">
+            <div className="flex flex-col border-b border-zinc-800">
               {intervalsData.map((interval, index) => (
                 <TimeInterval
                   key={interval.id}
