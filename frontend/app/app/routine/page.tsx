@@ -17,6 +17,7 @@ import { Dialog } from "@base-ui/react";
 import { Preset } from "@/services/presets.service";
 import { useUpdatePreset } from "@/hooks/presets/use-update-preset";
 import { TIME_INTERVAL_MINUTES } from "@/constants/settings";
+import { hasOverlap } from "@/lib/time-blocks";
 
 export default function RoutinePage() {
   const { data: presets } = usePresets();
@@ -80,15 +81,7 @@ export default function RoutinePage() {
     const newStartTime = new Date(intervalsData[intervalIndex].startTime);
     const newEndTime = new Date(newStartTime.getTime() + timeBlockDuration);
 
-    const hasOverlap = timeBlocks?.some((timeBlock) => {
-      if (timeBlock.id === sourceId) return false;
-
-      return (
-        newStartTime < timeBlock.endTime && newEndTime > timeBlock.startTime
-      );
-    });
-
-    if (hasOverlap) {
+    if (hasOverlap(timeBlocks ?? [], newStartTime, newEndTime, sourceId)) {
       return;
     }
 
@@ -119,13 +112,7 @@ export default function RoutinePage() {
       newStartTime.getTime() + presetToMove.durationMinutes * 60 * 1000,
     );
 
-    const hasOverlap = timeBlocks.some((timeBlock) => {
-      return (
-        newStartTime < timeBlock.endTime && newEndTime > timeBlock.startTime
-      );
-    });
-
-    if (hasOverlap) return;
+    if (hasOverlap(timeBlocks || [], newStartTime, newEndTime)) return;
 
     createTimeBlock({
       title: presetToMove.title,
