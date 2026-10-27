@@ -1,5 +1,5 @@
 "use client";
-import { useMemo } from "react";
+import { ComponentProps, useMemo } from "react";
 import { Preset as PresetItem } from "./components/preset";
 import { DragDropProvider, DragOverlay } from "@dnd-kit/react";
 import { useSettings } from "@/hooks/use-settings";
@@ -16,12 +16,14 @@ import { useCreatePreset } from "@/hooks/routine/use-create-preset";
 import { Dialog } from "@base-ui/react";
 import { Preset } from "@/services/presets.service";
 import { useUpdatePreset } from "@/hooks/routine/use-update-preset";
-import { TIME_INTERVAL_MINUTES } from "@/constants/settings";
 import { hasOverlap } from "@/lib/time-blocks";
+import { useTimeGrid } from "@/hooks/routine/use-time-grid";
 
 export default function RoutinePage() {
   const { data: presets } = usePresets();
   const { data: timeBlocks } = useTimeBlocks();
+
+  const intervalsData = useTimeGrid();
 
   const { mutate: createTimeBlock } = useCreateTimeBlock();
   const { mutate: updateTimeBlock } = useUpdateTimeBlock();
@@ -32,93 +34,66 @@ export default function RoutinePage() {
 
   const presetDialog = Dialog.createHandle<Preset>();
 
-  const totalIntervals = useMemo(
-    () =>
-      Math.max(
-        0,
-        Math.floor(
-          (dayEndTime.getTime() - dayStartTime.getTime()) /
-            (1000 * 60 * TIME_INTERVAL_MINUTES),
-        ),
-      ),
-    [dayEndTime, dayStartTime],
+  const intervalsById = useMemo(
+    () => new Map(intervalsData.map((i) => [i.id, i])),
+    [intervalsData],
   );
 
-  const intervalsData = useMemo(() => {
-    return Array.from({ length: totalIntervals }).map((_, index) => {
-      const intervalStart = new Date(dayStartTime);
-      intervalStart.setMinutes(
-        dayStartTime.getMinutes() + index * TIME_INTERVAL_MINUTES,
-      );
-      const intervalEnd = new Date(intervalStart);
-      intervalEnd.setMinutes(
-        intervalStart.getMinutes() + TIME_INTERVAL_MINUTES,
-      );
+  const moveTimeBlock = (timeBlockId: string, newStartTime: Date) => {
+    const timeBlockToMove = timeBlocks?.find(
+      (timeBlock) => timeBlock.id === timeBlockId,
+    );
+    if (!timeBlockToMove) return;
 
-      return {
-        id: `time-interval-${index}`,
-        startTime: intervalStart,
-        endTime: intervalEnd,
-      };
-    });
-  }, [dayStartTime, totalIntervals]);
-
-  const handleTimeBlockDragEnd = (sourceId: string, targetId: string) => {
-    const intervalIndex = intervalsData.findIndex(
-      (interval) => interval.id === targetId,
+    const newEndTime = new Date(
+      newStartTime.getTime() +
+        (timeBlockToMove.endTime.getTime() -
+          timeBlockToMove.startTime.getTime()),
     );
 
-    if (intervalIndex === -1) return;
-
-    const timeBlockToUpdate = timeBlocks?.find(
-      (timeBlock) => timeBlock.id === sourceId,
-    );
-    if (!timeBlockToUpdate) return;
-
-    const timeBlockDuration =
-      timeBlockToUpdate.endTime.getTime() -
-      timeBlockToUpdate.startTime.getTime();
-    const newStartTime = new Date(intervalsData[intervalIndex].startTime);
-    const newEndTime = new Date(newStartTime.getTime() + timeBlockDuration);
-
-    if (hasOverlap(timeBlocks ?? [], newStartTime, newEndTime, sourceId)) {
+    if (hasOverlap(timeBlocks || [], newStartTime, newEndTime, timeBlockId)) {
       return;
     }
 
     updateTimeBlock({
-      id: timeBlockToUpdate.id,
-      title: timeBlockToUpdate.title,
+      id: timeBlockToMove.id,
+      title: timeBlockToMove.title,
       startTime: newStartTime,
       endTime: newEndTime,
     });
   };
 
-  const handlePresetDragEnd = (sourceId: string, targetId: string) => {
-    if (!presets || !timeBlocks) return;
+  const placePreset = (presetId: string, startTime: Date) => {
+    const preset = presets?.find((p) => p.id === presetId);
+    if (!preset) return;
 
-    const sourcePresetIndex = presets.findIndex(
-      (preset) => preset.id === sourceId,
-    );
-    const intervalIndex = intervalsData.findIndex(
-      (interval) => interval.id === targetId,
+    const endTime = new Date(
+      startTime.getTime() + preset.durationMinutes * 60 * 1000,
     );
 
-    if (sourcePresetIndex === -1 || intervalIndex === -1) return;
-
-    const presetToMove = presets[sourcePresetIndex];
-
-    const newStartTime = new Date(intervalsData[intervalIndex].startTime);
-    const newEndTime = new Date(
-      newStartTime.getTime() + presetToMove.durationMinutes * 60 * 1000,
-    );
-
-    if (hasOverlap(timeBlocks || [], newStartTime, newEndTime)) return;
+    if (hasOverlap(timeBlocks || [], startTime, endTime)) return;
 
     createTimeBlock({
-      title: presetToMove.title,
-      startTime: newStartTime,
-      endTime: newEndTime,
+      title: preset.title,
+      startTime,
+      endTime,
     });
+  };
+
+  const handleDragEnd: ComponentProps<typeof DragDropProvider>["onDragEnd"] = ({
+    operation,
+  }) => {
+    const { source, target } = operation;
+    if (!source || !target) return; // soltou fora da grade
+
+    const interval = intervalsById.get(target.id.toString());
+    if (!interval) return;
+
+    if (source.data?.type === DraggableType.preset) {
+      placePreset(source.id.toString(), interval.startTime);
+    } else {
+      moveTimeBlock(source.id.toString(), interval.startTime);
+    }
   };
 
   const handleCreatePreset = (preset: Omit<Preset, "id">) => {
@@ -134,24 +109,7 @@ export default function RoutinePage() {
   }
 
   return (
-    <DragDropProvider
-      onDragEnd={({ operation }) => {
-        if (!operation?.source) return;
-
-        if (operation.source.data?.type === DraggableType.preset) {
-          handlePresetDragEnd(
-            operation.source.id.toString(),
-            operation.target?.id.toString() || "",
-          );
-          return;
-        }
-
-        handleTimeBlockDragEnd(
-          operation.source.id.toString(),
-          operation.target?.id.toString() || "",
-        );
-      }}
-    >
+    <DragDropProvider onDragEnd={handleDragEnd}>
       <DragOverlay
         dropAnimation={null}
         disabled={(source) => source?.data?.type !== DraggableType.preset}
