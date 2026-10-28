@@ -1,16 +1,19 @@
+import { cn } from "cn";
 import { TimeIntervalData } from "@/hooks/routine/use-time-grid";
 import { useSettings } from "@/hooks/use-settings";
 import { TimeBlock } from "@/services/time-block.service";
 import { TimeBlockCard } from "./time-block-card";
 import { TimeInterval } from "./time-interval";
+import { PIXELS_PER_MINUTE, TIME_INTERVAL_MINUTES } from "@/constants/settings";
+import { getBorderClass } from "@/lib/routine-grid";
 
 export type RoutineGridProps = {
   intervals: TimeIntervalData[];
   timeBlocks: TimeBlock[];
 };
-
 export function RoutineGrid({ intervals, timeBlocks }: RoutineGridProps) {
   const { dayStartTime, dayEndTime } = useSettings();
+
   return (
     <div className="flex-1 w-full px-4 mt-16">
       <h1>Rotina</h1>
@@ -33,7 +36,10 @@ export function RoutineGrid({ intervals, timeBlocks }: RoutineGridProps) {
               <TimeInterval
                 key={interval.id}
                 id={interval.id}
-                className={`h-6 border-t ${index % 2 === 0 ? "border-zinc-800" : "border-zinc-900"}`}
+                className={cn("border-t", getBorderClass(interval.startTime))}
+                style={{
+                  height: `${TIME_INTERVAL_MINUTES * PIXELS_PER_MINUTE}px`,
+                }}
               />
             ))}
           </div>

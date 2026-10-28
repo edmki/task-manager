@@ -40,10 +40,12 @@ export function TimeInterval({
   id,
   children,
   className,
+  style,
 }: {
   id: string;
   children?: React.ReactNode;
   className?: string;
+  style?: React.CSSProperties;
 }) {
   const { ref, isDropTarget } = useDroppable({
     id,
@@ -54,6 +56,7 @@ export function TimeInterval({
     <div
       ref={ref}
       className={`${className} ${isDropTarget ? "bg-zinc-700" : ""}`}
+      style={style}
     >
       {children}
     </div>
