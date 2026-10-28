@@ -5,14 +5,19 @@ import { useSettings } from "@/hooks/use-settings";
 import { useMemo } from "react";
 import { PIXELS_PER_MINUTE, TIME_INTERVAL_MINUTES } from "@/constants/settings";
 
-type TimeBlockProps = {
+type TimeBlockCardProps = {
   id: string;
   title: string;
   startTime: Date;
   endTime: Date;
 };
 
-export function TimeBlock({ id, title, startTime, endTime }: TimeBlockProps) {
+export function TimeBlockCard({
+  id,
+  title,
+  startTime,
+  endTime,
+}: TimeBlockCardProps) {
   const { ref } = useDraggable({
     id,
   });

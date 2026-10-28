@@ -4,13 +4,13 @@ import { useDraggable } from "@dnd-kit/react";
 import { Feedback } from "@dnd-kit/dom";
 import { DraggableType } from "../enums/draggable-type";
 
-type PresetProps = {
+type PresetCardProps = {
   id: string;
   title: string;
   duration: number;
 };
 
-export function Preset({ id, title, duration }: PresetProps) {
+export function PresetCard({ id, title, duration }: PresetCardProps) {
   const { ref } = useDraggable({
     id,
     data: {

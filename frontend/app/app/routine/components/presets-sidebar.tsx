@@ -22,7 +22,7 @@ export function PresetsSidebar({
   dialogHandle,
 }: PresetsSidebarProps) {
   return (
-    <Sidebar side="right">
+    <Sidebar collapsible="none">
       <SidebarHeader />
       <SidebarContent>
         <SidebarGroup>

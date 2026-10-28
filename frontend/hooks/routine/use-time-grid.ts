@@ -2,7 +2,13 @@ import { useMemo } from "react";
 import { useSettings } from "../use-settings";
 import { TIME_INTERVAL_MINUTES } from "@/constants/settings";
 
-export function useTimeGrid() {
+export type TimeIntervalData = {
+  id: string;
+  startTime: Date;
+  endTime: Date;
+};
+
+export function useTimeGrid(): TimeIntervalData[] {
   const { dayStartTime, dayEndTime } = useSettings();
 
   return useMemo(() => {

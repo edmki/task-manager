@@ -15,7 +15,7 @@ import { NavUser } from "./nav-user";
 
 export function DashboardSidebar() {
   return (
-    <Sidebar>
+    <Sidebar collapsible="icon">
       <SidebarHeader>
         <NavUser
           user={{

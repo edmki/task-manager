@@ -1,11 +1,9 @@
 "use client";
+
 import { ComponentProps, useMemo } from "react";
-import { Preset as PresetItem } from "./components/preset";
-import { DragDropProvider, DragOverlay } from "@dnd-kit/react";
-import { useSettings } from "@/hooks/use-settings";
-import { TimeInterval } from "./components/time-interval";
+import { PresetCard } from "./components/preset-card";
+import { DragDropProvider } from "@dnd-kit/react";
 import { PresetsSidebar } from "./components/presets-sidebar";
-import { TimeBlock } from "./components/time-block";
 import { DraggableType } from "./enums/draggable-type";
 import { usePresets } from "@/hooks/routine/use-presets";
 import { useTimeBlocks } from "@/hooks/routine/use-time-blocks";
@@ -18,6 +16,8 @@ import { Preset } from "@/services/presets.service";
 import { useUpdatePreset } from "@/hooks/routine/use-update-preset";
 import { hasOverlap } from "@/lib/time-blocks";
 import { useTimeGrid } from "@/hooks/routine/use-time-grid";
+import { PresetDragOverlay } from "./components/preset-drag-overlay";
+import { RoutineGrid } from "./components/routine-grid";
 
 export default function RoutinePage() {
   const { data: presets } = usePresets();
@@ -29,8 +29,6 @@ export default function RoutinePage() {
   const { mutate: updateTimeBlock } = useUpdateTimeBlock();
   const { mutate: createPreset } = useCreatePreset();
   const { mutate: updatePreset } = useUpdatePreset();
-
-  const { dayStartTime, dayEndTime } = useSettings();
 
   const presetDialog = Dialog.createHandle<Preset>();
 
@@ -110,32 +108,12 @@ export default function RoutinePage() {
 
   return (
     <DragDropProvider onDragEnd={handleDragEnd}>
-      <DragOverlay
-        dropAnimation={null}
-        disabled={(source) => source?.data?.type !== DraggableType.preset}
-      >
-        {(source) => {
-          if (!source || source.data?.type !== DraggableType.preset) {
-            return null;
-          }
-
-          const preset = presets.find((preset) => preset.id === source.id);
-
-          if (!preset) return null;
-
-          return (
-            <PresetItem
-              id={preset.id}
-              title={preset.title}
-              duration={preset.durationMinutes}
-            />
-          );
-        }}
-      </DragOverlay>
-      <div className="max-w-3xl w-full">
+      <PresetDragOverlay presets={presets} />
+      <div className="flex">
+        <RoutineGrid intervals={intervalsData} timeBlocks={timeBlocks} />
         <PresetsSidebar dialogHandle={presetDialog}>
           {presets.map((preset) => (
-            <PresetItem
+            <PresetCard
               key={preset.id}
               id={preset.id}
               title={preset.title}
@@ -143,41 +121,6 @@ export default function RoutinePage() {
             />
           ))}
         </PresetsSidebar>
-        <h1>Rotina</h1>
-        <div className="flex gap-4 mt-8">
-          <div className="flex flex-col text-zinc-400 text-sm -top-2 relative">
-            {Array.from({
-              length: dayEndTime.getHours() - dayStartTime.getHours(),
-            }).map((_, index) => (
-              <div key={index} className="h-12">
-                {`${String(dayStartTime.getHours() + index).padStart(2, "0")}:00`}
-              </div>
-            ))}
-            <div className="h-12">
-              {`${String(dayEndTime.getHours()).padStart(2, "0")}:00`}
-            </div>
-          </div>
-          <div className="flex-1 relative">
-            <div className="flex flex-col border-b border-zinc-800">
-              {intervalsData.map((interval, index) => (
-                <TimeInterval
-                  key={interval.id}
-                  id={interval.id}
-                  className={`h-6 border-t ${index % 2 === 0 ? "border-zinc-800" : "border-zinc-900"}`}
-                />
-              ))}
-            </div>
-            {timeBlocks.map((timeBlock) => (
-              <TimeBlock
-                key={timeBlock.id}
-                id={timeBlock.id}
-                title={timeBlock.title}
-                startTime={timeBlock.startTime}
-                endTime={timeBlock.endTime}
-              />
-            ))}
-          </div>
-        </div>
       </div>
       <PresetDialog
         dialogHandle={presetDialog}

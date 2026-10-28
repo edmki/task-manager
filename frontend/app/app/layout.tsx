@@ -10,10 +10,8 @@ export default function Layout({ children }: { children: React.ReactNode }) {
     <SidebarProvider>
       <DashboardSidebar />
       <SidebarInset>
-        <header className="flex p-4">
-          <SidebarTrigger />
-        </header>
-        <main className="gap-4 p-4 pt-0">{children}</main>
+        <SidebarTrigger className="absolute left-4 top-4" />
+        {children}
       </SidebarInset>
     </SidebarProvider>
   );
