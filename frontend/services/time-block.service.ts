@@ -1,3 +1,5 @@
+import { addDays, parse } from "date-fns";
+
 export type TimeBlock = {
   id: string;
   title: string;
@@ -34,14 +36,15 @@ function createTimeBlock(data: CreateTimeBlockInput): Promise<TimeBlock> {
   return delay(newTimeBlock);
 }
 
-function updateTimeBlock(data: TimeBlock): Promise<TimeBlock> {
-  const index = timeBlockMock.findIndex((tb) => tb.id === data.id);
+function updateTimeBlock(
+  id: string,
+  data: Partial<Omit<TimeBlock, "id">>,
+): Promise<TimeBlock> {
+  const index = timeBlockMock.findIndex((tb) => tb.id === id);
   if (index !== -1) {
     timeBlockMock[index] = {
       ...timeBlockMock[index],
-      title: data.title,
-      startTime: data.startTime,
-      endTime: data.endTime,
+      ...data,
     };
     return delay(timeBlockMock[index]);
   } else {
@@ -50,7 +53,13 @@ function updateTimeBlock(data: TimeBlock): Promise<TimeBlock> {
 }
 
 export const timeBlockService = {
-  list: () => delay([...timeBlockMock]),
+  list: (dateKey: string) => {
+    const start = parse(dateKey, "yyyy-MM-dd", new Date());
+    const end = addDays(start, 1);
+    return Promise.resolve(
+      timeBlockMock.filter((b) => b.startTime >= start && b.startTime < end),
+    );
+  },
   create: createTimeBlock,
   update: updateTimeBlock,
 };

@@ -6,28 +6,31 @@ import { TimeBlockCard } from "./time-block-card";
 import { TimeInterval } from "./time-interval";
 import { PIXELS_PER_MINUTE, TIME_INTERVAL_MINUTES } from "@/constants/settings";
 import { getBorderClass } from "@/lib/routine-grid";
+import { DateNavigator } from "./date-navigator";
+import { minutesToHours } from "date-fns";
 
 export type RoutineGridProps = {
   intervals: TimeIntervalData[];
   timeBlocks: TimeBlock[];
 };
 export function RoutineGrid({ intervals, timeBlocks }: RoutineGridProps) {
-  const { dayStartTime, dayEndTime } = useSettings();
+  const { dayStartMinutes, dayEndMinutes } = useSettings();
 
   return (
     <div className="flex-1 w-full px-4 mt-16">
       <h1>Rotina</h1>
+      <DateNavigator />
       <div className="flex gap-4 mt-8  max-w-3xl">
         <div className="flex flex-col text-zinc-400 text-sm -top-2 relative">
           {Array.from({
-            length: dayEndTime.getHours() - dayStartTime.getHours(),
+            length: minutesToHours(dayEndMinutes - dayStartMinutes),
           }).map((_, index) => (
             <div key={index} className="h-12">
-              {`${String(dayStartTime.getHours() + index).padStart(2, "0")}:00`}
+              {`${String(dayStartMinutes / 60 + index).padStart(2, "0")}:00`}
             </div>
           ))}
           <div className="h-12">
-            {`${String(dayEndTime.getHours()).padStart(2, "0")}:00`}
+            {`${String(dayEndMinutes / 60).padStart(2, "0")}:00`}
           </div>
         </div>
         <div className="flex-1 relative">

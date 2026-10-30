@@ -1,8 +1,8 @@
 "use client";
 
 import { useDraggable } from "@dnd-kit/react";
+import { differenceInMinutes, format, startOfDay } from "date-fns";
 import { useSettings } from "@/hooks/use-settings";
-import { useMemo } from "react";
 import { PIXELS_PER_MINUTE, TIME_INTERVAL_MINUTES } from "@/constants/settings";
 
 type TimeBlockCardProps = {
@@ -18,38 +18,22 @@ export function TimeBlockCard({
   startTime,
   endTime,
 }: TimeBlockCardProps) {
-  const { ref } = useDraggable({
-    id,
-  });
-  const { dayStartTime } = useSettings();
+  const { ref } = useDraggable({ id });
+  const { dayStartMinutes } = useSettings();
 
-  const top =
-    ((startTime.getTime() - dayStartTime.getTime()) / (1000 * 60)) *
-    PIXELS_PER_MINUTE;
-  const height =
-    ((endTime.getTime() - startTime.getTime()) / (1000 * 60)) *
-    PIXELS_PER_MINUTE;
-
-  const oneInterval: boolean = useMemo(
-    () =>
-      endTime.getTime() - startTime.getTime() <
-      1000 * 60 * TIME_INTERVAL_MINUTES * 2,
-    [endTime, startTime],
+  const minutesFromMidnight = differenceInMinutes(
+    startTime,
+    startOfDay(startTime),
   );
+  const durationMinutes = differenceInMinutes(endTime, startTime);
 
-  const startTimeString = useMemo(() => {
-    return startTime.toLocaleTimeString([], {
-      hour: "2-digit",
-      minute: "2-digit",
-    });
-  }, [startTime]);
+  const top = (minutesFromMidnight - dayStartMinutes) * PIXELS_PER_MINUTE;
+  const height = durationMinutes * PIXELS_PER_MINUTE;
 
-  const endTimeString = useMemo(() => {
-    return endTime.toLocaleTimeString([], {
-      hour: "2-digit",
-      minute: "2-digit",
-    });
-  }, [endTime]);
+  const isCompact = durationMinutes < TIME_INTERVAL_MINUTES * 2;
+
+  const startLabel = format(startTime, "HH:mm");
+  const endLabel = format(endTime, "HH:mm");
 
   return (
     <div
@@ -58,11 +42,11 @@ export function TimeBlockCard({
       style={{ top, height }}
     >
       <span>{title}</span>
-      {oneInterval ? (
-        <span className="text-zinc-400 ml-1">{startTimeString}</span>
+      {isCompact ? (
+        <span className="text-zinc-400 ml-1">{startLabel}</span>
       ) : (
         <div className="text-xs text-zinc-400">
-          {startTimeString} - {endTimeString}
+          {startLabel} - {endLabel}
         </div>
       )}
     </div>

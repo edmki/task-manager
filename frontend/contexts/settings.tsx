@@ -1,14 +1,14 @@
 import { createContext, useCallback, useMemo, useState } from "react";
 
 export type SettingsContextType = {
-  dayStartTime: Date;
-  dayEndTime: Date;
+  dayStartMinutes: number;
+  dayEndMinutes: number;
   updateSettings?: (settings: SettingsContextType) => void;
 };
 
 const defaultSettings: SettingsContextType = {
-  dayStartTime: new Date(new Date().setHours(8, 0, 0, 0)),
-  dayEndTime: new Date(new Date().setHours(23, 0, 0, 0)),
+  dayStartMinutes: 8 * 60, // 8:00 AM
+  dayEndMinutes: 23 * 60, // 11:00 PM
 };
 
 export const SettingsContext =
