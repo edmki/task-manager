@@ -53,8 +53,7 @@ export default function RoutinePage() {
 
     updateTimeBlock({
       id: block.id,
-      startTime: newStartTime,
-      endTime: newEndTime,
+      data: { startTime: newStartTime, endTime: newEndTime },
     });
   };
 
