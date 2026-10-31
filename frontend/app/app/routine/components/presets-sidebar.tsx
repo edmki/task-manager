@@ -8,19 +8,16 @@ import {
   SidebarFooter,
   Sidebar,
 } from "@/components/ui/sidebar";
-import { Preset } from "@/services/presets.service";
-import { Dialog } from "@base-ui/react";
+import { usePresetDialog } from "@/hooks/routine/use-preset-dialog";
 import { Plus } from "lucide-react";
 
 type PresetsSidebarProps = {
   children?: React.ReactNode;
-  dialogHandle?: Dialog.Handle<Preset>;
 };
 
-export function PresetsSidebar({
-  children,
-  dialogHandle,
-}: PresetsSidebarProps) {
+export function PresetsSidebar({ children }: PresetsSidebarProps) {
+  const dialogHandle = usePresetDialog();
+
   return (
     <Sidebar collapsible="none">
       <SidebarHeader />

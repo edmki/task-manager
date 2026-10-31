@@ -7,20 +7,17 @@ import {
   Dialog,
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
+import { usePresetDialog } from "@/hooks/routine/use-preset-dialog";
 import { Preset } from "@/services/presets.service";
-import { Dialog as BaseDialog } from "@base-ui/react";
 
 type PresetDialogProps = {
-  dialogHandle?: BaseDialog.Handle<Preset>;
   onCreate: (data: Omit<Preset, "id">) => void;
   onEdit: (data: Preset) => void;
 };
 
-export function PresetDialog({
-  dialogHandle,
-  onCreate,
-  onEdit,
-}: PresetDialogProps) {
+export function PresetDialog({ onCreate, onEdit }: PresetDialogProps) {
+  const dialogHandle = usePresetDialog();
+
   const handleEdit = (data: Preset) => {
     onEdit(data);
     dialogHandle?.close();

@@ -2,7 +2,6 @@
 
 import { ComponentProps, useMemo } from "react";
 import { DragDropProvider } from "@dnd-kit/react";
-import { Dialog } from "@base-ui/react";
 import { PresetCard } from "./components/preset-card";
 import { PresetsSidebar } from "./components/presets-sidebar";
 import { PresetDialog } from "./components/preset-dialog";
@@ -18,10 +17,7 @@ import { useUpdateTimeBlock } from "@/hooks/routine/use-update-time-block";
 import { useTimeGrid } from "@/hooks/routine/use-time-grid";
 import { useSelectedDate } from "@/hooks/routine/use-selected-date";
 import { hasOverlap } from "@/lib/time-blocks";
-import { Preset } from "@/services/presets.service";
 import { minutesToMilliseconds } from "date-fns";
-
-const presetDialog = Dialog.createHandle<Preset>();
 
 export default function RoutinePage() {
   const { dateKey } = useSelectedDate();
@@ -95,23 +91,18 @@ export default function RoutinePage() {
       <PresetDragOverlay presets={presets} />
       <div className="flex">
         <RoutineGrid intervals={intervals} timeBlocks={timeBlocks} />
-        <PresetsSidebar dialogHandle={presetDialog}>
+        <PresetsSidebar>
           {presets.map((preset) => (
             <PresetCard
               key={preset.id}
               id={preset.id}
               title={preset.title}
               duration={preset.durationMinutes}
-              dialogHandle={presetDialog}
             />
           ))}
         </PresetsSidebar>
       </div>
-      <PresetDialog
-        dialogHandle={presetDialog}
-        onCreate={createPreset}
-        onEdit={updatePreset}
-      />
+      <PresetDialog onCreate={createPreset} onEdit={updatePreset} />
     </DragDropProvider>
   );
 }

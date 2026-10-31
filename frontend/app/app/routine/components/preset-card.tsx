@@ -3,15 +3,13 @@
 import { useDraggable } from "@dnd-kit/react";
 import { Feedback } from "@dnd-kit/dom";
 import { DraggableType } from "../enums/draggable-type";
-import { Preset } from "@/services/presets.service";
-import { Dialog } from "@base-ui/react";
 import { DialogTrigger } from "@/components/ui/dialog";
+import { usePresetDialog } from "@/hooks/routine/use-preset-dialog";
 
 type PresetCardProps = {
   id: string;
   title: string;
   duration: number;
-  dialogHandle?: Dialog.Handle<Preset>;
   isOverlay?: boolean;
 };
 
@@ -19,9 +17,10 @@ export function PresetCard({
   id,
   title,
   duration,
-  dialogHandle,
   isOverlay,
 }: PresetCardProps) {
+  const dialogHandle = usePresetDialog();
+
   const { ref } = useDraggable({
     id,
     data: {
