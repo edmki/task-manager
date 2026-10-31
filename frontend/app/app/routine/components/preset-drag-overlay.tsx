@@ -27,6 +27,7 @@ export function PresetDragOverlay({ presets }: PresetDialogProps) {
             id={preset.id}
             title={preset.title}
             duration={preset.durationMinutes}
+            isOverlay
           />
         );
       }}

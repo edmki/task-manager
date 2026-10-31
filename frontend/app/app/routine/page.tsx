@@ -102,6 +102,7 @@ export default function RoutinePage() {
               id={preset.id}
               title={preset.title}
               duration={preset.durationMinutes}
+              dialogHandle={presetDialog}
             />
           ))}
         </PresetsSidebar>
