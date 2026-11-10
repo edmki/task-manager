@@ -1,6 +1,6 @@
 import { DataSource } from 'typeorm'
 import * as dotenv from 'dotenv'
-import { Env } from 'shared/env'
+import { Env } from '../../shared/env'
 
 dotenv.config()
 
