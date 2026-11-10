@@ -17,7 +17,7 @@ export class PostgresTimeBlockPresetRepository implements TimeBlockPresetReposit
   }
 
   async delete(presetId: string): Promise<void> {
-    await this.repository.delete(presetId)
+    await this.repository.softDelete(presetId)
   }
 
   async findById(presetId: string): Promise<TimeBlockPreset | null> {
