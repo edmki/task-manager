@@ -10,6 +10,9 @@ import { TimeBlockPresetRepository } from 'domain/repositories/time-block-preset
 import { TaskSchema } from './schemas/task.schema'
 import { UserSchema } from './schemas/user.schema'
 import { TimeBlockPresetSchema } from './schemas/time-block-preset.schema'
+import { TimeBlockSchema } from './schemas/time-block.schema'
+import { TimeBlockRepository } from 'domain/repositories/time-block-repository'
+import { PostgresTimeBlockRepository } from './repositories/postgres-time-block-repository'
 
 @Module({
   imports: [
@@ -22,7 +25,12 @@ import { TimeBlockPresetSchema } from './schemas/time-block-preset.schema'
         synchronize: false,
       }),
     }),
-    TypeOrmModule.forFeature([TaskSchema, UserSchema, TimeBlockPresetSchema]),
+    TypeOrmModule.forFeature([
+      TaskSchema,
+      UserSchema,
+      TimeBlockPresetSchema,
+      TimeBlockSchema,
+    ]),
   ],
   providers: [
     { provide: TaskRepository, useClass: PostgresTaskRepository },
@@ -31,7 +39,13 @@ import { TimeBlockPresetSchema } from './schemas/time-block-preset.schema'
       provide: TimeBlockPresetRepository,
       useClass: PostgresTimeBlockPresetRepository,
     },
+    { provide: TimeBlockRepository, useClass: PostgresTimeBlockRepository },
   ],
-  exports: [TaskRepository, UserRepository, TimeBlockPresetRepository],
+  exports: [
+    TaskRepository,
+    UserRepository,
+    TimeBlockPresetRepository,
+    TimeBlockRepository,
+  ],
 })
 export class DatabaseModule {}
