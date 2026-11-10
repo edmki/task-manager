@@ -2,9 +2,12 @@ import {
   Column,
   CreateDateColumn,
   Entity,
+  JoinColumn,
+  ManyToOne,
   PrimaryColumn,
   UpdateDateColumn,
 } from 'typeorm'
+import { UserSchema } from './user.schema'
 
 @Entity('tasks')
 export class TaskSchema {
@@ -22,6 +25,12 @@ export class TaskSchema {
 
   @Column('uuid')
   userId: string
+
+  @ManyToOne(() => UserSchema, {
+    onDelete: 'CASCADE',
+  })
+  @JoinColumn({ name: 'userId' })
+  user?: UserSchema
 
   @CreateDateColumn()
   createdAt: Date
