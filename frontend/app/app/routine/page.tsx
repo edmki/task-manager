@@ -18,6 +18,7 @@ import { useTimeGrid } from "@/hooks/routine/use-time-grid";
 import { useSelectedDate } from "@/hooks/routine/use-selected-date";
 import { hasOverlap } from "@/lib/time-blocks";
 import { minutesToMilliseconds } from "date-fns";
+import { TimeBlockDialog } from "./components/time-block-dialog";
 
 export default function RoutinePage() {
   const { dateKey } = useSelectedDate();
@@ -103,6 +104,10 @@ export default function RoutinePage() {
         </PresetsSidebar>
       </div>
       <PresetDialog onCreate={createPreset} onEdit={updatePreset} />
+      <TimeBlockDialog
+        onCreate={createTimeBlock}
+        onEdit={(data) => updateTimeBlock({ id: data.id, data })}
+      />
     </DragDropProvider>
   );
 }

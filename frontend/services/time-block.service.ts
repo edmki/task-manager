@@ -8,6 +8,10 @@ export type TimeBlock = {
 };
 
 export type CreateTimeBlockInput = Omit<TimeBlock, "id">;
+export type UpdateTimeBlockInput = {
+  id: string;
+  data: Partial<Omit<TimeBlock, "id">>;
+};
 
 const timeBlockMock: TimeBlock[] = [
   {
@@ -36,10 +40,10 @@ function createTimeBlock(data: CreateTimeBlockInput): Promise<TimeBlock> {
   return delay(newTimeBlock);
 }
 
-function updateTimeBlock(
-  id: string,
-  data: Partial<Omit<TimeBlock, "id">>,
-): Promise<TimeBlock> {
+function updateTimeBlock({
+  id,
+  data,
+}: UpdateTimeBlockInput): Promise<TimeBlock> {
   const index = timeBlockMock.findIndex((tb) => tb.id === id);
   if (index !== -1) {
     timeBlockMock[index] = {
