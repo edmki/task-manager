@@ -25,8 +25,8 @@ export class PostgresTimeBlockRepository implements TimeBlockRepository {
     return schema ? this.toDomain(schema) : null
   }
 
-  async findAll(): Promise<TimeBlock[]> {
-    const schemas = await this.repository.find()
+  async findByUser(userId: string): Promise<TimeBlock[]> {
+    const schemas = await this.repository.findBy({ userId })
     return schemas.map((schema) => this.toDomain(schema))
   }
 
