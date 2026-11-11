@@ -11,13 +11,13 @@ import {
   UpdateDateColumn,
 } from 'typeorm'
 import { TimeBlockPresetSchema } from './time-block-preset.schema'
-import { TimeBlock } from 'domain/entities/time-block'
+import { TimeBlockProps } from 'domain/entities/time-block'
 
 @Entity('time_blocks')
 @Index('idx_time_blocks_user_start', ['userId', 'startTime'])
 @Check('ck_time_blocks_range', '"endTime" > "startTime"')
 @Check('ck_time_blocks_lead', '"leadMinutes" >= 0')
-export class TimeBlockSchema implements TimeBlock {
+export class TimeBlockSchema implements TimeBlockProps {
   @PrimaryColumn('uuid')
   id: string
 

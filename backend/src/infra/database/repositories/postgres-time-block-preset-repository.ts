@@ -31,16 +31,15 @@ export class PostgresTimeBlockPresetRepository implements TimeBlockPresetReposit
   }
 
   private toDomain(schema: TimeBlockPresetSchema): TimeBlockPreset {
-    return {
+    return new TimeBlockPreset({
       id: schema.id,
+      userId: schema.userId,
       title: schema.title,
       durationMinutes: schema.durationMinutes,
       leadMinutes: schema.leadMinutes,
-      userId: schema.userId,
       createdAt: schema.createdAt,
       updatedAt: schema.updatedAt,
-      deletedAt: schema.deletedAt,
-    }
+    })
   }
 
   private toSchema(preset: TimeBlockPreset): TimeBlockPresetSchema {
@@ -52,7 +51,6 @@ export class PostgresTimeBlockPresetRepository implements TimeBlockPresetReposit
     schema.userId = preset.userId
     schema.createdAt = preset.createdAt
     schema.updatedAt = preset.updatedAt
-    schema.deletedAt = preset.deletedAt
     return schema
   }
 }

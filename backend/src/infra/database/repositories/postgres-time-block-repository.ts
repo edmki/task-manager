@@ -31,18 +31,17 @@ export class PostgresTimeBlockRepository implements TimeBlockRepository {
   }
 
   private toDomain(schema: TimeBlockSchema): TimeBlock {
-    return {
+    return new TimeBlock({
       id: schema.id,
+      userId: schema.userId,
+      presetId: schema.presetId,
       title: schema.title,
       startTime: schema.startTime,
       endTime: schema.endTime,
-      userId: schema.userId,
-      presetId: schema.presetId,
       leadMinutes: schema.leadMinutes,
       createdAt: schema.createdAt,
       updatedAt: schema.updatedAt,
-      deletedAt: schema.deletedAt,
-    }
+    })
   }
 
   private toSchema(timeBlock: TimeBlock): TimeBlockSchema {
@@ -56,7 +55,6 @@ export class PostgresTimeBlockRepository implements TimeBlockRepository {
     schema.leadMinutes = timeBlock.leadMinutes
     schema.createdAt = timeBlock.createdAt
     schema.updatedAt = timeBlock.updatedAt
-    schema.deletedAt = timeBlock.deletedAt
     return schema
   }
 }

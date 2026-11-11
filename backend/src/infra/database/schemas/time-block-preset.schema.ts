@@ -1,4 +1,3 @@
-import { TimeBlockPreset } from 'domain/entities/time-block-preset'
 import {
   Check,
   Column,
@@ -9,6 +8,7 @@ import {
   PrimaryColumn,
   UpdateDateColumn,
 } from 'typeorm'
+import { TimeBlockPresetProps } from 'domain/entities/time-block-preset'
 
 @Entity('time_block_presets')
 @Index('uq_time_block_presets_user_title_active', ['userId', 'title'], {
@@ -17,7 +17,7 @@ import {
 })
 @Check('ck_time_block_presets_duration', '"durationMinutes" > 0')
 @Check('ck_time_block_presets_lead', '"leadMinutes" >= 0')
-export class TimeBlockPresetSchema implements TimeBlockPreset {
+export class TimeBlockPresetSchema implements TimeBlockPresetProps {
   @PrimaryColumn('uuid')
   id: string
 
