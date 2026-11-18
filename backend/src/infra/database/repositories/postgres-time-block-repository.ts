@@ -1,5 +1,5 @@
 import { InjectRepository } from '@nestjs/typeorm'
-import { Repository } from 'typeorm'
+import { LessThan, MoreThan, Repository } from 'typeorm'
 import { TimeBlock } from '../../../domain/entities/time-block'
 import { TimeBlockRepository } from '../../../domain/repositories/time-block-repository'
 import { TimeBlockSchema } from '../schemas/time-block.schema'
@@ -25,8 +25,19 @@ export class PostgresTimeBlockRepository implements TimeBlockRepository {
     return schema ? this.toDomain(schema) : null
   }
 
-  async findByUser(userId: string): Promise<TimeBlock[]> {
-    const schemas = await this.repository.findBy({ userId })
+  async findByUserInRange(
+    userId: string,
+    from: Date,
+    to: Date,
+  ): Promise<TimeBlock[]> {
+    const schemas = await this.repository.find({
+      where: {
+        userId,
+        startTime: LessThan(to),
+        endTime: MoreThan(from),
+      },
+      order: { startTime: 'ASC' },
+    })
     return schemas.map((schema) => this.toDomain(schema))
   }
 

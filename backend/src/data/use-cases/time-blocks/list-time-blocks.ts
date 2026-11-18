@@ -5,8 +5,12 @@ import { TimeBlockRepository } from 'domain/repositories/time-block-repository'
 export class ListTimeBlocks {
   constructor(private readonly repository: TimeBlockRepository) {}
 
-  async execute(userId: string) {
-    const timeBlocks = await this.repository.findByUser(userId)
+  async execute(params: { userId: string; from: Date; to: Date }) {
+    const timeBlocks = await this.repository.findByUserInRange(
+      params.userId,
+      params.from,
+      params.to,
+    )
     return timeBlocks.map((timeBlock) => ({
       id: timeBlock.id,
       presetId: timeBlock.presetId,
