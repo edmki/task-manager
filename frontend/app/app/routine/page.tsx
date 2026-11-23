@@ -19,12 +19,14 @@ import { useSelectedDate } from "@/hooks/routine/use-selected-date";
 import { hasOverlap } from "@/lib/time-blocks";
 import { minutesToMilliseconds } from "date-fns";
 import { TimeBlockDialog } from "./components/time-block-dialog";
+import { getDayRange } from "@/lib/date-range";
 
 export default function RoutinePage() {
   const { dateKey } = useSelectedDate();
+  const range = useMemo(() => getDayRange(dateKey), [dateKey]);
 
   const { data: presets } = usePresets();
-  const { data: timeBlocks } = useTimeBlocks(dateKey);
+  const { data: timeBlocks } = useTimeBlocks(range);
   const intervals = useTimeGrid(dateKey);
 
   const { mutate: createTimeBlock } = useCreateTimeBlock();
@@ -50,7 +52,11 @@ export default function RoutinePage() {
 
     updateTimeBlock({
       id: block.id,
-      data: { startTime: newStartTime, endTime: newEndTime },
+      data: {
+        title: block.title,
+        startTime: newStartTime,
+        endTime: newEndTime,
+      },
     });
   };
 
@@ -106,7 +112,16 @@ export default function RoutinePage() {
       <PresetDialog onCreate={createPreset} onEdit={updatePreset} />
       <TimeBlockDialog
         onCreate={createTimeBlock}
-        onEdit={(data) => updateTimeBlock({ id: data.id, data })}
+        onEdit={(data) =>
+          updateTimeBlock({
+            id: data.id,
+            data: {
+              title: data.title,
+              startTime: data.startTime,
+              endTime: data.endTime,
+            },
+          })
+        }
       />
     </DragDropProvider>
   );

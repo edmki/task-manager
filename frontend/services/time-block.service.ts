@@ -1,69 +1,47 @@
-import { addDays, parse } from "date-fns";
+import { api } from "@/lib/api";
+import { DateRange } from "@/lib/date-range";
 
 export type TimeBlock = {
   id: string;
   title: string;
   startTime: Date;
   endTime: Date;
+  leadMinutes?: number; // not implemented yet
 };
+
+export type ListTimeBlocksParams = DateRange;
 
 export type CreateTimeBlockInput = Omit<TimeBlock, "id">;
 export type UpdateTimeBlockInput = {
   id: string;
-  data: Partial<Omit<TimeBlock, "id">>;
+  data: Omit<TimeBlock, "id">;
 };
 
-const timeBlockMock: TimeBlock[] = [
-  {
-    id: "time-block-1",
-    title: "Almoço",
-    startTime: new Date(new Date().setHours(12, 0, 0, 0)),
-    endTime: new Date(new Date().setHours(13, 0, 0, 0)),
-  },
-  {
-    id: "time-block-2",
-    title: "Trabalho focado",
-    startTime: new Date(new Date().setHours(14, 0, 0, 0)),
-    endTime: new Date(new Date().setHours(16, 30, 0, 0)),
-  },
-];
+type TimeBlockDto = Omit<TimeBlock, "startTime" | "endTime"> & {
+  startTime: string;
+  endTime: string;
+};
 
-const delay = <T>(value: T, ms = 300) =>
-  new Promise<T>((resolve) => setTimeout(() => resolve(value), ms));
-
-function createTimeBlock(data: CreateTimeBlockInput): Promise<TimeBlock> {
-  const newTimeBlock: TimeBlock = {
-    id: crypto.randomUUID(),
-    ...data,
-  };
-  timeBlockMock.push(newTimeBlock);
-  return delay(newTimeBlock);
-}
-
-function updateTimeBlock({
-  id,
-  data,
-}: UpdateTimeBlockInput): Promise<TimeBlock> {
-  const index = timeBlockMock.findIndex((tb) => tb.id === id);
-  if (index !== -1) {
-    timeBlockMock[index] = {
-      ...timeBlockMock[index],
-      ...data,
-    };
-    return delay(timeBlockMock[index]);
-  } else {
-    return Promise.reject(new Error("Time block not found"));
-  }
-}
+const toTimeBlock = (dto: TimeBlockDto): TimeBlock => ({
+  ...dto,
+  startTime: new Date(dto.startTime),
+  endTime: new Date(dto.endTime),
+});
 
 export const timeBlockService = {
-  list: (dateKey: string) => {
-    const start = parse(dateKey, "yyyy-MM-dd", new Date());
-    const end = addDays(start, 1);
-    return Promise.resolve(
-      timeBlockMock.filter((b) => b.startTime >= start && b.startTime < end),
-    );
-  },
-  create: createTimeBlock,
-  update: updateTimeBlock,
+  list: (data: ListTimeBlocksParams) =>
+    api
+      .get<TimeBlockDto[]>("/time-blocks", { params: data })
+      .then((r) => r.data.map(toTimeBlock)),
+  create: (data: CreateTimeBlockInput): Promise<TimeBlock> =>
+    api
+      .post<TimeBlockDto>("/time-blocks", data)
+      .then((r) => toTimeBlock(r.data)),
+  update: (data: UpdateTimeBlockInput): Promise<TimeBlock> =>
+    api
+      .put<TimeBlockDto>(`/time-blocks/${data.id}`, {
+        ...data.data,
+        leadMinutes: 10,
+      })
+      .then((r) => toTimeBlock(r.data)),
 };
