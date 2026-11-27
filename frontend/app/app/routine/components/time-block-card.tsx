@@ -44,17 +44,19 @@ export function TimeBlockCard({
       ref={ref}
       handle={dialogHandle}
       payload={{ id, title, startTime, endTime }}
-      className="bg-zinc-800 rounded-md py-1 px-2 absolute w-full cursor-grab text-sm flex flex-col flex-wrap gap-0.5 items-start"
+      className="bg-zinc-800 rounded-md p-2 absolute w-full cursor-grab text-sm flex flex-col flex-wrap gap-0.5 items-start"
       style={{ top, height }}
     >
-      <span className="block">{title}</span>
-      {isCompact ? (
-        <span className="text-zinc-400 ml-1">{startLabel}</span>
-      ) : (
-        <span className="block text-xs text-zinc-400">
-          {startLabel} - {endLabel}
-        </span>
-      )}
+      <div className="flex flex-col flex-wrap justify-center items-start gap-1 max-h-full">
+        <span className="block leading-none">{title}</span>
+        {isCompact ? (
+          <span className="text-zinc-400 ml-1">{startLabel}</span>
+        ) : (
+          <span className="block text-xs text-zinc-400 leading-none">
+            {startLabel} - {endLabel}
+          </span>
+        )}
+      </div>
     </DialogTrigger>
   );
 }
