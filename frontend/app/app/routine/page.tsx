@@ -109,7 +109,18 @@ export default function RoutinePage() {
           ))}
         </PresetsSidebar>
       </div>
-      <PresetDialog onCreate={createPreset} onEdit={updatePreset} />
+      <PresetDialog
+        onCreate={createPreset}
+        onEdit={(data) =>
+          updatePreset({
+            id: data.id,
+            data: {
+              title: data.title,
+              durationMinutes: data.durationMinutes,
+            },
+          })
+        }
+      />
       <TimeBlockDialog
         onCreate={createTimeBlock}
         onEdit={(data) =>
